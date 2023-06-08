@@ -1,0 +1,34 @@
+<idea-plugin>
+
+  <actions>
+    <group id="EasyApiExportGroup" text="Export" description="Export apis">
+      <action id="com.reason.plugin.actions.PostmanExportAction"
+        class="com.reason.plugin.actions.PostmanExportAction" text="ExportToPostman"
+        description="ExportToPostman">
+      </action>
+      <action id="com.reason.plugin.actions.YapiExportAction"
+        class="com.reason.plugin.actions.YapiExportAction" text="ExportToYapi"
+        description="ExportToYapi">
+      </action>
+    </group>
+
+    <group id="EasyApiGenerateMenu" text="EasyApi" description="EasyApiGenerateMenu"
+      popup="true">
+      <add-to-group group-id="GenerateGroup" anchor="last"/>
+      <reference ref="EasyApiExportGroup"/>
+    </group>
+
+    <group id="EasyApiEditorLangPopupMenu" text="EasyApi" description="EasyApiEditorLangPopupMenu"
+      popup="true">
+      <add-to-group group-id="EditorLangPopupMenu" anchor="last"/>
+      <reference ref="EasyApiExportGroup"/>
+    </group>
+
+    <group id="EasyApiProjectViewPopupMenu" text="EasyApi" description="EasyApiProjectViewPopupMenu"
+      popup="true">
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+      <reference ref="EasyApiExportGroup"/>
+    </group>
+  </actions>
+
+</idea-plugin>
