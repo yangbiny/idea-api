@@ -4,7 +4,7 @@ import java.util.*
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.8.0"
-    id("org.jetbrains.intellij") version "1.14.1"
+    id("org.jetbrains.intellij") version "1.12.0"
     id("application")
     id("jacoco")
     `java-library`
@@ -25,7 +25,7 @@ group = "com.reason"
 version = properties["plugin_version"]!!
 
 intellij {
-    version.set("2022.3.3")
+    version.set("2021.2.1")
     type.set("IC") // Target IDE Platform
     plugins.set(listOf("com.intellij.java"))
 }
