@@ -12,8 +12,7 @@
       </action>
     </group>
 
-    <group id="EasyApiGenerateMenu" text="EasyApi" description="EasyApiGenerateMenu"
-      popup="true">
+    <group id="EasyApiGenerateMenu" text="EasyApi" description="EasyApiGenerateMenu" popup="true">
       <add-to-group group-id="GenerateGroup" anchor="last"/>
       <reference ref="EasyApiExportGroup"/>
     </group>
