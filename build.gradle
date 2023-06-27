@@ -1,0 +1,23 @@
+plugins {
+    id("java")
+    id("org.jetbrains.kotlin.plugin.allopen") version "$kotlinVersion"
+    id("org.jetbrains.kotlin.jvm") version "$kotlinVersion"
+    id("application")
+    id("jacoco")
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        maven {
+            url = "https://www.jetbrains.com/intellij-repository/releases"
+        }
+    }
+}
+
+group = "com.reason"
+version = properties["plugin_version"]
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+}

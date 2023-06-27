@@ -6,8 +6,8 @@
         class="com.reason.plugin.actions.PostmanExportAction" text="ExportToPostman"
         description="ExportToPostman">
       </action>
-      <action id="com.reason.plugin.actions.YapiExportAction"
-        class="com.reason.plugin.actions.YapiExportAction" text="ExportToYapi"
+      <action id="com.reason.plugin.actions.actions.YapiExportAction"
+        class="com.reason.plugin.actions.actions.YapiExportAction" text="ExportToYapi"
         description="ExportToYapi">
       </action>
     </group>

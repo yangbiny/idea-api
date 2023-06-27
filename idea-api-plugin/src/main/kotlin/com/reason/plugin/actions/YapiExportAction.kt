@@ -1,4 +1,4 @@
-package com.reason.plugin.actions
+package com.reason.plugin.actions.actions
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
