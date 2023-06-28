@@ -5,13 +5,12 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiJavaFile
 import org.slf4j.LoggerFactory
 
 /**
  * @author impassive
  */
-abstract class AbstractAction : AnAction() {
+abstract class AbstractAction(text: String) : AnAction(text) {
     override fun actionPerformed(actionEvent: AnActionEvent) {
         val data = actionEvent.getData(CommonDataKeys.EDITOR)
 
@@ -19,17 +18,20 @@ abstract class AbstractAction : AnAction() {
         log.info("start : $id")
 
         val project = actionEvent.project
-        val psiFile = PsiDocumentManager.getInstance(project!!).getPsiFile(data!!.document)
-        val psiJavaFile = psiFile as PsiJavaFile
+        val psiFile = PsiDocumentManager.getInstance(project!!).getPsiFile(data!!.document)!!
+        val children = psiFile.children
 
-        val classes = psiJavaFile.classes
-        for (psiClass in classes) {
-            export(psiClass)
+        for (child in children) {
+            println(child)
         }
+
+
     }
 
-    private fun export(psiClass: PsiClass) {
-        doExport(psiClass)
+    private fun exportJava(psiClassList: Array<PsiClass>) {
+        for (psiClass in psiClassList) {
+            doExport(psiClass)
+        }
     }
 
     abstract fun doExport(psiClass: PsiClass): Boolean

@@ -14,11 +14,12 @@ plugins {
 
 intellij {
     version.set("$intellijVersion")
-    type.set("IC") // Target IDE Platform
-    plugins.set(["com.intellij.java"])
+    type.set("IC") // Target IDE Platformw
+    plugins.set(["com.intellij.java","com.intellij.java"])
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.8.0")
     implementation("com.google.inject:guice:7.0.0")
     implementation(project(":idea-api-support"))
     implementation("com.jetbrains.intellij.idea:ideaIC:$intellijVersion")

@@ -15,4 +15,5 @@
   <!-- Product and plugin compatibility requirements.
        Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
   <depends optional="true" config-file="idea-api-java.xml">com.intellij.modules.java</depends>
+  <depends optional="true" config-file="idea-api-kotlin.xml">org.jetbrains.kotlin</depends>
 </idea-plugin>

@@ -1,22 +1,13 @@
 package com.reason.plugin.actions
 
 import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiJavaFile
-import com.reason.plugin.actions.AbstractAction
-import com.reason.plugin.export.DataExporter
 import com.reason.plugin.resovler.ExportDataResolver
 
 /**
  * @author impassive
  */
-@Singleton
-open class YapiExportAction : AbstractAction() {
+open class YapiExportAction : AbstractAction("Export To Yapi") {
 
     @Inject
     protected lateinit var exportDataResolver: ExportDataResolver
