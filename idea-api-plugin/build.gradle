@@ -1,8 +1,5 @@
 plugins {
-    id "application"
     id("org.jetbrains.intellij") version "$jetbrainsVersion"
-    id "org.jetbrains.kotlin.plugin.allopen" version "$kotlinVersion"
-    id 'org.jetbrains.kotlin.jvm' version "$kotlinVersion"
 }
 
 /*repositories {
@@ -15,27 +12,15 @@ plugins {
 intellij {
     version.set("$intellijVersion")
     type.set("IC") // Target IDE Platformw
-    plugins.set(["com.intellij.java","com.intellij.java"])
+    plugins.set(["com.intellij.java"])
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.8.0")
+    implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
     implementation("com.google.inject:guice:7.0.0")
     implementation(project(":idea-api-support"))
     implementation("com.jetbrains.intellij.idea:ideaIC:$intellijVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 }
 
-tasks {
-    buildSearchableOptions {
-        enabled = false
-    }
 
-    compileKotlin {
-        kotlinOptions.jvmTarget = "17"
-    }
-
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "17"
-    }
-}
