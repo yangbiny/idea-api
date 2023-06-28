@@ -10,6 +10,17 @@ import com.reason.plugin.common.ExportData
 @Singleton
 open class SpringExportDataResolver : ExportDataResolver {
     override fun resolvePsiClassData(psiClass: PsiClass): ExportData {
-        TODO("Not yet implemented")
+        val exportNameName = psiClass.docComment?.text ?: psiClass.name
+        val annotations = psiClass.annotations
+
+        val baseRequestMapping = ""
+        for (annotation in annotations) {
+            println(annotation)
+        }
+
+        return ExportData(
+            exportName = exportNameName!!,
+            items = emptyList()
+        )
     }
 }

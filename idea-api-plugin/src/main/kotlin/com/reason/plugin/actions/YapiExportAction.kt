@@ -1,6 +1,7 @@
 package com.reason.plugin.actions
 
 import com.google.inject.Inject
+import com.google.inject.Singleton
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -14,13 +15,14 @@ import com.reason.plugin.resovler.ExportDataResolver
 /**
  * @author impassive
  */
+@Singleton
 open class YapiExportAction : AbstractAction() {
 
     @Inject
-    private lateinit var exportDataResolver: ExportDataResolver
+    protected lateinit var exportDataResolver: ExportDataResolver
 
-    @Inject
-    private lateinit var dataExporter: DataExporter
+    /* @Inject
+     private lateinit var dataExporter: DataExporter*/
     override fun doExport(psiClass: PsiClass): Boolean {
 
         val annotations = psiClass.annotations
@@ -28,7 +30,7 @@ open class YapiExportAction : AbstractAction() {
         //1. 解析 为 指定的对象
         val exportData = exportDataResolver.resolvePsiClassData(psiClass)
         //2. 导出 数据
-        dataExporter.export(exportData)
+        // dataExporter.export(exportData)
         return false
     }
 
