@@ -15,7 +15,6 @@ open class YapiExportAction : AbstractAction("Export To Yapi") {
     /* @Inject
      private lateinit var dataExporter: DataExporter*/
     override fun doExport(psiClass: PsiClass): Boolean {
-
         val annotations = psiClass.annotations
         // 根据 注解，选择 不同的解析器
         //1. 解析 为 指定的对象

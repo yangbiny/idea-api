@@ -2,7 +2,6 @@ plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "$kotlinVersion"
     id("application")
-    id("jacoco")
 }
 
 allprojects {
@@ -18,6 +17,7 @@ subprojects {
     plugins.apply("java")
     plugins.apply("kotlin")
     plugins.apply("jacoco")
+    plugins.apply("org.jetbrains.kotlin.jvm")
 
     repositories {
         mavenCentral()
