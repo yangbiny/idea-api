@@ -30,6 +30,3 @@ subprojects {
 group = "com.reason"
 version = properties["plugin_version"]
 
-kotlin {
-    jvmToolchain(17)
-}

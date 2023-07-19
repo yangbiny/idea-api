@@ -1,5 +1,6 @@
 plugins {
     id("org.jetbrains.intellij") version "$jetbrainsVersion"
+    id("org.jetbrains.kotlin.jvm") version "$kotlinVersion"
 }
 
 /*repositories {
@@ -12,11 +13,11 @@ plugins {
 intellij {
     version.set("$intellijVersion")
     type.set("IC") // Target IDE Platformw
-    plugins.set(["com.intellij.java"])
+    plugins.set(["com.intellij.java", "org.jetbrains.kotlin"])
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
+    // implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
     implementation("com.google.inject:guice:7.0.0")
     implementation("com.jetbrains.intellij.idea:ideaIC:$intellijVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
