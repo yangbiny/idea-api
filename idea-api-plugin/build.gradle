@@ -17,7 +17,7 @@ intellij {
 }
 
 dependencies {
-    // implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
+    compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
     implementation("com.google.inject:guice:7.0.0")
     implementation("com.jetbrains.intellij.idea:ideaIC:$intellijVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test")

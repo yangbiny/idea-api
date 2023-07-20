@@ -18,7 +18,7 @@ open class SpringExportDataResolver : ExportDataResolver {
         val exportNameName = ktFile.name
         val annotations = ktFile.annotations
 
-        (ktFile.children[4] as KtClass).annotationEntries[0]
+        val reference = (ktFile.children[4] as KtClass).annotationEntries[0].reference
 
         for (child in ktFile.children) {
             if (child is KtAnnotationEntry) {

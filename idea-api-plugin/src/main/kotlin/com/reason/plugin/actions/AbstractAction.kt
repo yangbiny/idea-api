@@ -14,6 +14,7 @@ import com.reason.plugin.infra.ApiContextUtil
 import com.reason.plugin.infra.PsiContainer
 import com.reason.plugin.resovler.ExportDataResolver
 import com.reason.plugin.resovler.SpringExportDataResolver
+import org.jetbrains.kotlin.psi.KtFile
 import org.slf4j.LoggerFactory
 
 /**
@@ -25,9 +26,9 @@ abstract class AbstractAction(text: String) : AnAction(text) {
 
     override fun actionPerformed(actionEvent: AnActionEvent) {
         val data = actionEvent.getData(CommonDataKeys.EDITOR)
-        val id = actionEvent.actionManager.getId(this)
         val project = actionEvent.project
         val psiFile = PsiDocumentManager.getInstance(project!!).getPsiFile(data!!.document)!!
+
         val psiContainer = PsiContainer(psiFile)
         ApiContextUtil.set(
             ApiContext(
@@ -35,6 +36,7 @@ abstract class AbstractAction(text: String) : AnAction(text) {
                 psiContainer = psiContainer
             )
         )
+
         export(psiContainer)
     }
 
