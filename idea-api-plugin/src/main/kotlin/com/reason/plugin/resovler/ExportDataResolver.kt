@@ -1,14 +1,12 @@
 package com.reason.plugin.resovler
 
-import com.google.inject.ImplementedBy
-import com.intellij.psi.PsiClass
 import com.reason.plugin.common.ExportData
+import com.reason.plugin.infra.PsiContainer
 
 /**
  * @author impassive
  */
-@ImplementedBy(SpringExportDataResolver::class)
 interface ExportDataResolver {
 
-    fun resolvePsiClassData(psiClass: PsiClass): ExportData
+    fun resolvePsiClassData(psiContainer: PsiContainer): ExportData
 }
