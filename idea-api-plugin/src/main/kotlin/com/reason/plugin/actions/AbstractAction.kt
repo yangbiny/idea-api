@@ -24,7 +24,7 @@ abstract class AbstractAction(text: String) : AnAction(text) {
 
     override fun actionPerformed(actionEvent: AnActionEvent) {
         val psiFile = actionEvent.getData(CommonDataKeys.PSI_FILE)!!
-        val psiContainer = PsiContainer(psiFile)
+        val psiContainer = PsiContainer(psiFile, actionEvent.dataContext)
         ApiContextUtil.set(
             ApiContext(
                 injector = injector,

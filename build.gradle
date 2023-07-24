@@ -7,6 +7,9 @@ version = properties["plugin_version"]
 
 allprojects {
     repositories {
+        maven {
+            url = "https://plugins.jetbrains.com/maven"
+        }
         mavenCentral()
         maven {
             url = "https://www.jetbrains.com/intellij-repository/releases"

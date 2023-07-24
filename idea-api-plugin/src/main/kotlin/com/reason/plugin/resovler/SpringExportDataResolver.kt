@@ -1,14 +1,14 @@
 package com.reason.plugin.resovler
 
 import com.google.inject.Singleton
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.actionSystem.LangDataKeys
+import com.intellij.psi.PsiElement
 import com.reason.plugin.common.ExportData
 import com.reason.plugin.common.ExportItem
 import com.reason.plugin.common.HttpMethod
 import com.reason.plugin.infra.PsiContainer
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.ValueArgument
+import org.jetbrains.kotlin.psi.*
 
 /**
  * @author impassive
@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.psi.ValueArgument
 open class SpringExportDataResolver : ExportDataResolver {
     override fun resolvePsiClassData(psiContainer: PsiContainer): ExportData {
         val ktFile = psiContainer.psiFile as KtFile
+        val dataContext = psiContainer.dataContext
 
-        val exportNameName = ktFile.name
-
+        var exportNameName = ""
         var baseRequestMapping = ""
 
         val items = mutableListOf<ExportItem>()
@@ -28,6 +28,7 @@ open class SpringExportDataResolver : ExportDataResolver {
 
             if (ktClass is KtClass) {
 
+                exportNameName = ktClass.name.orEmpty()
                 // 获取 class 顶部的 注解
                 for (anno in ktClass.annotationEntries) {
                     if (anno.valueArguments.isEmpty()) {
@@ -50,6 +51,15 @@ open class SpringExportDataResolver : ExportDataResolver {
                             }
                             val paramName = ktParameter.name
                             val paramType = ktParameter.typeReference?.text.orEmpty()
+
+                            val containingFile =
+                                ktParameter.typeReference?.typeElement?.originalElement?.containingFile
+
+                            find(
+                                paramType,
+                                dataContext
+                            )
+                            println(containingFile)
                         }
                     }
 
@@ -91,6 +101,24 @@ open class SpringExportDataResolver : ExportDataResolver {
             else -> throw IllegalArgumentException("不支持的请求类型")
         }
     }
+
+    private fun find(targetClassName: String, dataContext: DataContext) {
+        // 获取AnActionEvent中的元素
+        val targetElement = dataContext.getData(LangDataKeys.PSI_ELEMENT) as? KtElement
+
+        // 向上查找对应的类
+        var parent: PsiElement? = targetElement
+        while ((parent !is KtClass || parent.name != targetClassName) && parent != null) {
+            parent = parent?.parent
+        }
+        // 找到名称匹配的类
+        if (parent != null && parent.text == targetClassName) {
+            val targetClass = parent as KtClass
+            println(targetClassName)
+        }
+        println("xx")
+    }
+
 
     private fun checkAndBuildHttpMethod(
         requestAnnoName: String,
