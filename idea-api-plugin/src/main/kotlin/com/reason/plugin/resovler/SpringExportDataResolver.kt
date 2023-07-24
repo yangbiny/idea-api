@@ -1,12 +1,14 @@
 package com.reason.plugin.resovler
 
 import com.google.inject.Singleton
-import com.intellij.psi.PsiModifierListOwner
 import com.reason.plugin.common.ExportData
+import com.reason.plugin.common.ExportItem
+import com.reason.plugin.common.HttpMethod
 import com.reason.plugin.infra.PsiContainer
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.ValueArgument
 
 /**
  * @author impassive
@@ -15,27 +17,85 @@ import org.jetbrains.kotlin.psi.KtFile
 open class SpringExportDataResolver : ExportDataResolver {
     override fun resolvePsiClassData(psiContainer: PsiContainer): ExportData {
         val ktFile = psiContainer.psiFile as KtFile
+
         val exportNameName = ktFile.name
-        val annotations = ktFile.annotations
 
-        val reference = (ktFile.children[4] as KtClass).annotationEntries[0].reference
+        var baseRequestMapping = ""
 
-        for (child in ktFile.children) {
-            if (child is KtAnnotationEntry) {
-                val psiModifierListOwner = child.parent as? PsiModifierListOwner
-                if (psiModifierListOwner != null) {
-                    println(psiModifierListOwner)
+        val items = mutableListOf<ExportItem>()
+        val declarations = ktFile.declarations
+        for (ktClass in declarations) {
+
+            if (ktClass is KtClass) {
+
+                // 获取 class 顶部的 注解
+                for (anno in ktClass.annotationEntries) {
+                    if (anno.valueArguments.isEmpty()) {
+                        continue
+                    }
+                    baseRequestMapping =
+                        anno.valueArguments[0].getArgumentExpression()?.text.orEmpty()
+                            .replace("\"", "")
+                }
+
+                for (method in ktClass.declarations) {
+
+                    if (method is KtFunction) {
+                        val valueParameterList = method.valueParameters
+                        for (ktParameter in valueParameterList) {
+                            val annotationEntries = ktParameter.annotationEntries
+                            for (annotationEntry in annotationEntries) {
+                                val paramName = annotationEntry.text.orEmpty()
+                                println(paramName)
+                            }
+                            val paramName = ktParameter.name
+                            val paramType = ktParameter.typeReference?.text.orEmpty()
+                        }
+                    }
+
+                    for (methodAnno in method.annotationEntries) {
+                        for (valueArgument in methodAnno.valueArguments) {
+                            val path = valueArgument.getArgumentExpression()?.text.orEmpty()
+                                .replace("\"", "")
+                            val exportItem = ExportItem(
+                                requestUrl = baseRequestMapping + path,
+                                method = buildMethod(
+                                    methodAnno.shortName.toString(),
+                                    methodAnno.valueArguments
+                                )
+                            )
+                            items.add(exportItem)
+                        }
+                    }
                 }
             }
         }
 
-        val baseRequestMapping = ""
-        for (annotation in annotations) {
-            println(annotation)
-        }
         return ExportData(
             exportName = exportNameName,
-            items = emptyList()
+            items = items
         )
+    }
+
+    private fun buildMethod(
+        requestAnnoName: String,
+        valueArguments: MutableList<out ValueArgument>
+    ): HttpMethod {
+        return when (requestAnnoName) {
+            "PostMapping" -> HttpMethod.POST
+            "GetMapping" -> HttpMethod.GET
+            "PutMapping" -> HttpMethod.PUT
+            "DeleteMapping" -> HttpMethod.DELETE
+            "PatchMapping" -> HttpMethod.PATCH
+            "RequestMapping" -> checkAndBuildHttpMethod(requestAnnoName, valueArguments)
+            else -> throw IllegalArgumentException("不支持的请求类型")
+        }
+    }
+
+    private fun checkAndBuildHttpMethod(
+        requestAnnoName: String,
+        valueArguments: MutableList<out ValueArgument>
+    ): HttpMethod {
+        return HttpMethod.POST
     }
 }

@@ -6,7 +6,6 @@ import com.google.inject.Injector
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.psi.PsiDocumentManager
 import com.reason.plugin.export.DataExporter
 import com.reason.plugin.export.YapiDataExporter
 import com.reason.plugin.infra.ApiContext
@@ -14,7 +13,6 @@ import com.reason.plugin.infra.ApiContextUtil
 import com.reason.plugin.infra.PsiContainer
 import com.reason.plugin.resovler.ExportDataResolver
 import com.reason.plugin.resovler.SpringExportDataResolver
-import org.jetbrains.kotlin.psi.KtFile
 import org.slf4j.LoggerFactory
 
 /**
@@ -25,15 +23,7 @@ abstract class AbstractAction(text: String) : AnAction(text) {
     private val injector: Injector = Guice.createInjector(GuiceModule())
 
     override fun actionPerformed(actionEvent: AnActionEvent) {
-        val data = actionEvent.getData(CommonDataKeys.EDITOR)
-        val project = actionEvent.project
-        val psiFile = PsiDocumentManager.getInstance(project!!).getPsiFile(data!!.document)!!
-
-        if (psiFile is KtFile) {
-            val classes = psiFile.classes
-            println(classes.size)
-        }
-
+        val psiFile = actionEvent.getData(CommonDataKeys.PSI_FILE)!!
         val psiContainer = PsiContainer(psiFile)
         ApiContextUtil.set(
             ApiContext(

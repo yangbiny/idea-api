@@ -14,9 +14,9 @@ data class ExportItem(
     // 请求URL
     val requestUrl: String,
     // 请求头信息（包括 请求的参数类型: 例如：ContentType: application/json）
-    val requestHeaders: Map<String, String>,
+    val requestHeaders: Map<String, String> = emptyMap(),
     // 请求参数名称及其类型：name:String
-    val requestParams: Map<String, String>,
+    val requestParams: Map<String, String> = emptyMap(),
     // 请求信息体：参数及其类型：name:
     val requestBody: Any? = null,
     val responseBody: Any? = null

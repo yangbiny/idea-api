@@ -1,6 +1,7 @@
 plugins {
     id("org.jetbrains.intellij") version "$jetbrainsVersion"
     id("org.jetbrains.kotlin.jvm") version "$kotlinVersion"
+    id("java")
 }
 
 intellij {
@@ -10,20 +11,14 @@ intellij {
 }
 
 dependencies {
-    // https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-    // https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-compiler
-    //runtimeOnly("org.jetbrains.kotlin:kotlin-compiler:$kotlinVersion")
-    //compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
     implementation("com.google.inject:guice:7.0.0")
-    implementation("com.jetbrains.intellij.idea:ideaIC:$intellijVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 }
 
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "17"
 }
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "17"
 }

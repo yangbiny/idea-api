@@ -1,14 +1,18 @@
 plugins {
-    id("java")
-    id("org.jetbrains.kotlin.jvm") version "$kotlinVersion"
-    id("application")
 }
+
+
+group = "com.reason"
+version = properties["plugin_version"]
 
 allprojects {
     repositories {
         mavenCentral()
         maven {
             url = "https://www.jetbrains.com/intellij-repository/releases"
+        }
+        maven {
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
         }
     }
 }
@@ -17,21 +21,4 @@ configurations.configureEach {
     resolutionStrategy.sortArtifacts(ResolutionStrategy.SortOrder.DEPENDENCY_FIRST)
 }
 
-
-subprojects {
-    plugins.apply("java")
-    plugins.apply("kotlin")
-    plugins.apply("jacoco")
-    plugins.apply("org.jetbrains.kotlin.jvm")
-
-    repositories {
-        mavenCentral()
-        maven {
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
-    }
-}
-
-group = "com.reason"
-version = properties["plugin_version"]
 
