@@ -29,6 +29,11 @@ abstract class AbstractAction(text: String) : AnAction(text) {
         val project = actionEvent.project
         val psiFile = PsiDocumentManager.getInstance(project!!).getPsiFile(data!!.document)!!
 
+        if (psiFile is KtFile) {
+            val classes = psiFile.classes
+            println(classes.size)
+        }
+
         val psiContainer = PsiContainer(psiFile)
         ApiContextUtil.set(
             ApiContext(

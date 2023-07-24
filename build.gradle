@@ -13,6 +13,11 @@ allprojects {
     }
 }
 
+configurations.configureEach {
+    resolutionStrategy.sortArtifacts(ResolutionStrategy.SortOrder.DEPENDENCY_FIRST)
+}
+
+
 subprojects {
     plugins.apply("java")
     plugins.apply("kotlin")
