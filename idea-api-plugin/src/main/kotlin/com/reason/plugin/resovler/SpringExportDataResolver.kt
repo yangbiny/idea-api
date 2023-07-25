@@ -10,6 +10,7 @@ import com.reason.plugin.common.ExportItem
 import com.reason.plugin.common.HttpMethod
 import com.reason.plugin.common.MethodParamInfo
 import com.reason.plugin.infra.PsiContainer
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
 import org.jetbrains.kotlin.psi.*
 
 /**
@@ -44,13 +45,19 @@ open class SpringExportDataResolver : ExportDataResolver {
                     val params = mutableListOf<MethodParamInfo>()
                     if (method is KtFunction) {
                         val valueParameterList = method.valueParameters
+                        val returnTypeReference = method.getReturnTypeReference()
+                        val ktTypeReference =
+                            returnTypeReference?.typeElement?.typeArgumentsAsTypes?.get(0)
+                        val packageName =
+                            ((returnTypeReference?.typeElement as KtUserType).referenceExpression?.containingFile as KtFile).packageFqName.asString()
+
                         for (ktParameter in valueParameterList) {
                             val annotationEntries = ktParameter.annotationEntries
                             for (annotationEntry in annotationEntries) {
                                 val paramName = annotationEntry.text.orEmpty()
                                 println(paramName)
                             }
-                            // 参数的名称
+                            // 参数的名称w
                             val paramName = ktParameter.name
                             // 参数的类型的名称
                             val paramTypeName = ktParameter.typeReference?.text.orEmpty()
