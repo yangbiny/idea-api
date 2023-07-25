@@ -1,5 +1,7 @@
 package com.reason.plugin.common
 
+import com.intellij.psi.PsiClass
+
 /**
  * @author impassive
  */
@@ -16,8 +18,13 @@ data class ExportItem(
     // 请求头信息（包括 请求的参数类型: 例如：ContentType: application/json）
     val requestHeaders: Map<String, String> = emptyMap(),
     // 请求参数名称及其类型：name:String
-    val requestParams: Map<String, String> = emptyMap(),
+    val requestParams: List<MethodParamInfo>,
     // 请求信息体：参数及其类型：name:
     val requestBody: Any? = null,
     val responseBody: Any? = null
+)
+
+data class MethodParamInfo(
+    val name: String,
+    val type: PsiClass
 )

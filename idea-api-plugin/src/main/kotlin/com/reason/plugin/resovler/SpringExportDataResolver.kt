@@ -1,12 +1,14 @@
 package com.reason.plugin.resovler
 
 import com.google.inject.Singleton
-import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.actionSystem.LangDataKeys
-import com.intellij.psi.PsiElement
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiClass
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.searches.AllClassesSearch
 import com.reason.plugin.common.ExportData
 import com.reason.plugin.common.ExportItem
 import com.reason.plugin.common.HttpMethod
+import com.reason.plugin.common.MethodParamInfo
 import com.reason.plugin.infra.PsiContainer
 import org.jetbrains.kotlin.psi.*
 
@@ -17,8 +19,6 @@ import org.jetbrains.kotlin.psi.*
 open class SpringExportDataResolver : ExportDataResolver {
     override fun resolvePsiClassData(psiContainer: PsiContainer): ExportData {
         val ktFile = psiContainer.psiFile as KtFile
-        val dataContext = psiContainer.dataContext
-
         var exportNameName = ""
         var baseRequestMapping = ""
 
@@ -41,6 +41,7 @@ open class SpringExportDataResolver : ExportDataResolver {
 
                 for (method in ktClass.declarations) {
 
+                    val params = mutableListOf<MethodParamInfo>()
                     if (method is KtFunction) {
                         val valueParameterList = method.valueParameters
                         for (ktParameter in valueParameterList) {
@@ -49,34 +50,35 @@ open class SpringExportDataResolver : ExportDataResolver {
                                 val paramName = annotationEntry.text.orEmpty()
                                 println(paramName)
                             }
+                            // 参数的名称
                             val paramName = ktParameter.name
-                            val paramType = ktParameter.typeReference?.text.orEmpty()
-
-                            val containingFile =
-                                ktParameter.typeReference?.typeElement?.originalElement?.containingFile
-
-                            find(
-                                paramType,
-                                dataContext
-                            )
-                            println(containingFile)
+                            // 参数的类型的名称
+                            val paramTypeName = ktParameter.typeReference?.text.orEmpty()
+                            // 参数类型的class信息
+                            val paramTypeClass = find(method.project, paramTypeName)
+                            params.add(MethodParamInfo(paramName.orEmpty(), paramTypeClass!!))
                         }
                     }
 
+                    var path = ""
+                    var httpMethod: HttpMethod = HttpMethod.NO_METHOD
                     for (methodAnno in method.annotationEntries) {
                         for (valueArgument in methodAnno.valueArguments) {
-                            val path = valueArgument.getArgumentExpression()?.text.orEmpty()
+                            path = valueArgument.getArgumentExpression()?.text.orEmpty()
                                 .replace("\"", "")
-                            val exportItem = ExportItem(
-                                requestUrl = baseRequestMapping + path,
-                                method = buildMethod(
-                                    methodAnno.shortName.toString(),
-                                    methodAnno.valueArguments
-                                )
+                            httpMethod = buildMethod(
+                                methodAnno.shortName.toString(),
+                                methodAnno.valueArguments
                             )
-                            items.add(exportItem)
                         }
                     }
+
+                    val exportItem = ExportItem(
+                        requestUrl = baseRequestMapping + path,
+                        method = httpMethod,
+                        requestParams = params
+                    )
+                    items.add(exportItem)
                 }
             }
         }
@@ -85,6 +87,23 @@ open class SpringExportDataResolver : ExportDataResolver {
             exportName = exportNameName,
             items = items
         )
+    }
+
+    private fun find(project: Project, className: String): PsiClass? {
+        val search = AllClassesSearch.search(GlobalSearchScope.projectScope(project), project)
+        return search.first {
+            val name = it.name
+            if (name == className) {
+                // 获取类上的注解
+                it.annotations[0].findDeclaredAttributeValue("value")?.text
+
+                // 获取每一个字段的注解
+                it.allFields[0].name
+                // 获取对应注解的信息
+                it.allFields[0].annotations[0].findDeclaredAttributeValue("message")?.text
+            }
+            name == className
+        }
     }
 
     private fun buildMethod(
@@ -102,28 +121,11 @@ open class SpringExportDataResolver : ExportDataResolver {
         }
     }
 
-    private fun find(targetClassName: String, dataContext: DataContext) {
-        // 获取AnActionEvent中的元素
-        val targetElement = dataContext.getData(LangDataKeys.PSI_ELEMENT) as? KtElement
-
-        // 向上查找对应的类
-        var parent: PsiElement? = targetElement
-        while ((parent !is KtClass || parent.name != targetClassName) && parent != null) {
-            parent = parent?.parent
-        }
-        // 找到名称匹配的类
-        if (parent != null && parent.text == targetClassName) {
-            val targetClass = parent as KtClass
-            println(targetClassName)
-        }
-        println("xx")
-    }
-
-
     private fun checkAndBuildHttpMethod(
         requestAnnoName: String,
         valueArguments: MutableList<out ValueArgument>
     ): HttpMethod {
+        println(requestAnnoName + " " + valueArguments.size)
         return HttpMethod.POST
     }
 }
