@@ -21,10 +21,15 @@ data class ExportItem(
     val requestParams: List<MethodParamInfo>,
     // 请求信息体：参数及其类型：name:
     val requestBody: Any? = null,
-    val responseBody: Any? = null
+    val responseBody: MethodReturnInfo? = null
 )
 
 data class MethodParamInfo(
     val name: String,
     val type: PsiClass
+)
+
+data class MethodReturnInfo(
+    val outType: PsiClass?,
+    val innerType: PsiClass?,
 )
