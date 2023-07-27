@@ -1,21 +1,37 @@
 package com.reason.plugin.common.utils
 
 import com.intellij.lang.Language
-import com.reason.plugin.resovler.items.KotlinClassResolver
+import java.util.*
 
 /**
  * @author impassive
  */
 object SPIUtils {
-    fun <T> resolveClass(language: Language, classs: Class<T>): T {
-        return when (language) {
-            Language.findLanguageByID("kotlin") -> {
-                KotlinClassResolver() as T
-            }
-            else -> {
-                throw RuntimeException("not support language: ${language.displayName}")
+
+    private val RESOLVER_MAP = mutableMapOf<String, MutableMap<Class<*>, Any>>()
+
+    fun <T> resolveClass(language: Language, tClass: Class<T>): T {
+        val languageName = language.displayName
+        RESOLVER_MAP[languageName]?.let {
+            it[tClass]?.let { classMap ->
+                @Suppress("UNCHECKED_CAST")
+                return classMap as T
             }
         }
+
+        val classLoader = Thread.currentThread().contextClassLoader
+        val inputStream = classLoader.getResourceAsStream(tClass.name)
+        if (inputStream != null) {
+            val properties = Properties()
+            properties.load(inputStream)
+            val className = properties.getProperty(languageName)
+            val clazz = classLoader.loadClass(className)
+            val instance = clazz.getDeclaredConstructor().newInstance()
+            RESOLVER_MAP.computeIfAbsent(languageName) { mutableMapOf() }[tClass] = instance
+            @Suppress("UNCHECKED_CAST")
+            return instance as T
+        }
+        throw RuntimeException("Not found class: ${tClass.name}")
     }
 
 }

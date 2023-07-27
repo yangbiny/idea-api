@@ -19,13 +19,9 @@ open class SpringExportDataResolver : ExportDataResolver {
         val exportNameName = psiFile.name
         val items = mutableListOf<ExportItem>()
 
-        val classes = if (psiFile is KtFile) {
-            psiFile.declarations.filter { it is PsiClass }
-        } else emptyList()
-
-        classes.forEach {
-            SPIUtils.resolveClass(it.language, LanguageResolver::class.java)
-        }
+        val resolver = SPIUtils.resolveClass(psiFile.language, LanguageResolver::class.java)
+        val exportItems = resolver.resolve(psiFile)
+        println(exportItems)
 
         return ExportData(
             exportName = exportNameName,

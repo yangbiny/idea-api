@@ -1,6 +1,6 @@
 package com.reason.plugin.resovler.items
 
-import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.compiled.ClsClassImpl
 import com.reason.plugin.common.ExportItem
 import com.reason.plugin.common.HttpMethod
@@ -9,6 +9,7 @@ import com.reason.plugin.common.utils.PsiUtils
 import com.reason.plugin.resovler.AbstractLanguageResolver
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtUserType
 
@@ -16,11 +17,16 @@ import org.jetbrains.kotlin.psi.KtUserType
  * @author impassive
  */
 open class KotlinClassResolver : AbstractLanguageResolver() {
-    override fun doResolve(psiClass: PsiClass): List<ExportItem> {
-        if (psiClass !is KtClass) {
+    override fun doResolve(psiFile: PsiFile): List<ExportItem> {
+        if (psiFile !is KtFile) {
             return emptyList()
         }
-        val ktClass = psiClass as KtClass
+        val ktClassList = psiFile.declarations.filterIsInstance<KtClass>()
+        if (ktClassList.isEmpty()) {
+            return emptyList()
+        }
+
+        val ktClass = ktClassList[0]
 
         val exportNameName = ktClass.name.orEmpty()
         var baseRequestMapping = ""

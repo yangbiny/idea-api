@@ -1,6 +1,6 @@
 package com.reason.plugin.resovler
 
-import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiFile
 import com.reason.plugin.common.ExportItem
 
 /**
@@ -8,6 +8,6 @@ import com.reason.plugin.common.ExportItem
  */
 interface LanguageResolver {
 
-    fun resolve(psiClass: PsiClass): List<ExportItem>
+    fun resolve(psiFile: PsiFile): List<ExportItem>
 
 }
