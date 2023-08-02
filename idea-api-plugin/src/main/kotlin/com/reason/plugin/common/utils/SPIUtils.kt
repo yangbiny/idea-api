@@ -19,12 +19,15 @@ object SPIUtils {
             }
         }
 
-        val classLoader = Thread.currentThread().contextClassLoader
+        val classLoader = SPIUtils::class.java.classLoader
         val inputStream = classLoader.getResourceAsStream(tClass.name)
         if (inputStream != null) {
             val properties = Properties()
             properties.load(inputStream)
             val className = properties.getProperty(languageName)
+            if (className.isNullOrBlank()) {
+                throw IllegalArgumentException("Not found class: ${tClass.name}")
+            }
             val clazz = classLoader.loadClass(className)
             val instance = clazz.getDeclaredConstructor().newInstance()
             RESOLVER_MAP.computeIfAbsent(languageName) { mutableMapOf() }[tClass] = instance
