@@ -1,7 +1,7 @@
-package com.reason.plugin.resovler
+package com.reason.support.adapter
 
 import com.intellij.psi.PsiFile
-import com.reason.plugin.common.ExportItem
+import com.reason.support.common.ExportItem
 
 /**
  * @author impassive

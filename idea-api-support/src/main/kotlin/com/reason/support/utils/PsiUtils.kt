@@ -1,4 +1,4 @@
-package com.reason.plugin.common.utils
+package com.reason.support.utils
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass

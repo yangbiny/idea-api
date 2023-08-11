@@ -1,22 +1,19 @@
 package com.reason.plugin.resovler.items
 
 import com.intellij.psi.PsiFile
-import com.intellij.psi.impl.compiled.ClsClassImpl
-import com.reason.plugin.common.ExportItem
-import com.reason.plugin.common.HttpMethod
-import com.reason.plugin.common.MethodParamInfo
-import com.reason.plugin.common.utils.PsiUtils
+import com.reason.api.support.resolver.KotlinResolver
 import com.reason.plugin.resovler.AbstractLanguageResolver
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
+import com.reason.support.common.ExportItem
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtUserType
 
 /**
  * @author impassive
  */
 open class KotlinClassResolver : AbstractLanguageResolver() {
+
+    private val resolverAdapter = KotlinResolver()
+
     override fun doResolve(psiFile: PsiFile): List<ExportItem> {
         if (psiFile !is KtFile) {
             return emptyList()
@@ -25,7 +22,6 @@ open class KotlinClassResolver : AbstractLanguageResolver() {
         if (ktClassList.isEmpty()) {
             return emptyList()
         }
-
         val ktClasses = ktClassList.filter { ktClass ->
             ktClass.annotationEntries.any {
                 it.shortName?.asString() == "RestController"
@@ -36,7 +32,6 @@ open class KotlinClassResolver : AbstractLanguageResolver() {
         }
 
         val items = mutableListOf<ExportItem>()
-
         for (ktClass in ktClasses) {
             var baseRequestMapping = ""
             // 获取 class 顶部的 注解
@@ -50,68 +45,15 @@ open class KotlinClassResolver : AbstractLanguageResolver() {
             }
             for (method in ktClass.declarations) {
 
-                val params = mutableListOf<MethodParamInfo>()
-                if (method is KtFunction) {
-                    val valueParameterList = method.valueParameters
-                    if (method.hasDeclaredReturnType()) {
-                        val returnTypeReference = method.getReturnTypeReference()!!
-                        val returnType =
-                            returnTypeReference.typeElement?.typeArgumentsAsTypes?.get(0)
-                        val returnTypePackageName =
-                            returnTypeReference.containingKtFile.packageFqName.asString()
-                        val returnTypeOfOut =
-                            ((returnTypeReference.typeElement as KtUserType).referenceExpression!!.references[0].resolve() as ClsClassImpl).qualifiedName
-
-                        println(returnTypeOfOut)
-                        println(returnTypePackageName)
-                        println(returnType)
-                    }
-
-                    for (ktParameter in valueParameterList) {
-                        val annotationEntries = ktParameter.annotationEntries
-                        for (annotationEntry in annotationEntries) {
-                            val paramName = annotationEntry.text.orEmpty()
-                            println(paramName)
-                        }
-                        // 参数的名称w
-                        val paramName = ktParameter.name
-                        // 参数的类型的名称
-                        val paramTypeName =
-                            ktParameter.typeReference?.text.orEmpty()
-                        val packageName =
-                            ktParameter.containingKtFile.packageFqName.asString()
-                        // 参数类型的class信息
-                        val paramTypeClass =
-                            PsiUtils.findPisClassByName(
-                                "$packageName.$paramTypeName",
-                                method.project
-                            )
-                        params.add(
-                            MethodParamInfo(
-                                paramName.orEmpty(),
-                                paramTypeClass!!
-                            )
-                        )
-                    }
-                }
-
-                var path = ""
-                var httpMethod: HttpMethod = HttpMethod.NO_METHOD
-                for (methodAnno in method.annotationEntries) {
-                    for (valueArgument in methodAnno.valueArguments) {
-                        path = valueArgument.getArgumentExpression()?.text.orEmpty()
-                            .replace("\"", "")
-                        httpMethod = buildMethod(
-                            methodAnno.shortName.toString(),
-                            methodAnno.valueArguments
-                        )
-                    }
-                }
+                val resolveMethod = resolverAdapter.resolveMethod(method)
+                val resolveParam = resolverAdapter.resolveParam(method)
+                val resolveReturn = resolverAdapter.resolveReturn(method)
 
                 val exportItem = ExportItem(
-                    requestUrl = baseRequestMapping + path,
-                    method = httpMethod,
-                    requestParams = params
+                    baseRequestMapping = baseRequestMapping,
+                    requestInfo = resolveMethod,
+                    requestMethodParam = resolveParam,
+                    requestReturnInfo = resolveReturn,
                 )
                 items.add(exportItem)
             }

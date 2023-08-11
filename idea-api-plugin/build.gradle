@@ -11,6 +11,8 @@ intellij {
 }
 
 dependencies {
+    implementation(project(":idea-api-support"))
+    implementation(project(":idea-api-support-kotlin"))
     implementation("com.google.inject:guice:7.0.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
 }

@@ -1,4 +1,4 @@
-package com.reason.plugin.common
+package com.reason.support.common
 
 /**
  * @author impassive
